@@ -5,30 +5,31 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema LittleLemonDB
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema LittleLemonDB
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `LittleLemonDB` DEFAULT CHARACTER SET utf8 ;
+USE `LittleLemonDB` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`Customer`
+-- Table `LittleLemonDB`.`Customer`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Customer` (
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Customer` (
   `CustomerID` INT NOT NULL,
   `CustomerName` VARCHAR(255) NOT NULL,
-  `CustomerContactDetails` VARCHAR(255) NOT NULL,
+  `PhoneNumber` VARCHAR(11) NOT NULL,
+  `Email` VARCHAR(255) NULL,
   PRIMARY KEY (`CustomerID`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Staff`
+-- Table `LittleLemonDB`.`Staff`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Staff` (
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Staff` (
   `StaffID` INT NOT NULL,
   `StaffName` VARCHAR(255) NOT NULL,
   `Role` VARCHAR(255) NOT NULL,
@@ -38,35 +39,34 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Booking`
+-- Table `LittleLemonDB`.`Booking`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Booking` (
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Booking` (
   `BookingID` INT NOT NULL,
-  `CustomerID` INT NOT NULL,
   `BookingDate` DATETIME NOT NULL,
   `TableNumber` INT NULL,
-  `Customer_CustomerID` INT NOT NULL,
+  `CustomerID` INT NOT NULL,
   `StaffID` INT NOT NULL,
   PRIMARY KEY (`BookingID`),
-  INDEX `fk_Booking_Customer1_idx` (`Customer_CustomerID` ASC) VISIBLE,
+  INDEX `fk_Booking_Customer1_idx` (`CustomerID` ASC) VISIBLE,
   INDEX `fk_Booking_Staff1_idx` (`StaffID` ASC) VISIBLE,
   CONSTRAINT `fk_Booking_Customer1`
-    FOREIGN KEY (`Customer_CustomerID`)
-    REFERENCES `mydb`.`Customer` (`CustomerID`)
+    FOREIGN KEY (`CustomerID`)
+    REFERENCES `LittleLemonDB`.`Customer` (`CustomerID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Booking_Staff1`
     FOREIGN KEY (`StaffID`)
-    REFERENCES `mydb`.`Staff` (`StaffID`)
+    REFERENCES `LittleLemonDB`.`Staff` (`StaffID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`OrderStatus`
+-- Table `LittleLemonDB`.`OrderStatus`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`OrderStatus` (
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`OrderStatus` (
   `StatusID` INT NOT NULL,
   `DeliveryDate` DATETIME NOT NULL,
   `Status` ENUM('In Queue', 'Preparing', 'En Route', 'Delivered') NOT NULL,
@@ -76,46 +76,63 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Menu`
+-- Table `LittleLemonDB`.`Menu`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Menu` (
-  `FoodID` INT NOT NULL,
-  `FoodName` VARCHAR(255) NOT NULL,
-  `FoodType` ENUM('Drink', 'Starter', 'Entree', 'Dessert') NOT NULL,
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Menu` (
+  `MenuID` INT NOT NULL,
   `Cuisine` VARCHAR(255) NOT NULL,
   `Price` DECIMAL(10,2) NOT NULL,
-  PRIMARY KEY (`FoodID`))
+  PRIMARY KEY (`MenuID`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Order`
+-- Table `LittleLemonDB`.`MenuItemID`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`MenuItemID` (
+  `ItemID` INT NOT NULL,
+  `ItemType` ENUM('Drink', 'Starter', 'Entree', 'Dessert') NULL,
+  `Price` DECIMAL(10,2) NOT NULL,
+  `ItemName` VARCHAR(255) NOT NULL,
+  `MenuID` INT NOT NULL,
+  PRIMARY KEY (`ItemID`),
+  INDEX `fk_MenuItemID_Menu1_idx` (`MenuID` ASC) VISIBLE,
+  CONSTRAINT `fk_MenuItemID_Menu1`
+    FOREIGN KEY (`MenuID`)
+    REFERENCES `LittleLemonDB`.`Menu` (`MenuID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `LittleLemonDB`.`Order`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Order` (
   `OrderID` INT NOT NULL,
   `BookingID` INT NOT NULL,
   `OrderDate` DATETIME NOT NULL,
   `Quantity` INT NOT NULL,
   `TotalCost` DECIMAL(10,2) NOT NULL,
   `OrderStatusID` INT NOT NULL,
-  `FoodID` INT NOT NULL,
+  `MenuItemID` INT NOT NULL,
   PRIMARY KEY (`OrderID`),
   INDEX `BookingID_idx` (`BookingID` ASC) VISIBLE,
   INDEX `fk_Order_OrderStatus1_idx` (`OrderStatusID` ASC) VISIBLE,
-  INDEX `fk_Order_Menu1_idx` (`FoodID` ASC) VISIBLE,
+  INDEX `fk_Order_MenuItemID1_idx` (`MenuItemID` ASC) VISIBLE,
   CONSTRAINT `BookingID`
     FOREIGN KEY (`BookingID`)
-    REFERENCES `mydb`.`Booking` (`BookingID`)
+    REFERENCES `LittleLemonDB`.`Booking` (`BookingID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_OrderStatus1`
     FOREIGN KEY (`OrderStatusID`)
-    REFERENCES `mydb`.`OrderStatus` (`StatusID`)
+    REFERENCES `LittleLemonDB`.`OrderStatus` (`StatusID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_Menu1`
-    FOREIGN KEY (`FoodID`)
-    REFERENCES `mydb`.`Menu` (`FoodID`)
+  CONSTRAINT `fk_Order_MenuItemID1`
+    FOREIGN KEY (`MenuItemID`)
+    REFERENCES `LittleLemonDB`.`MenuItemID` (`ItemID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
