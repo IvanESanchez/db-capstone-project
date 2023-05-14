@@ -1,0 +1,126 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Customer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Customer` (
+  `CustomerID` INT NOT NULL,
+  `CustomerName` VARCHAR(255) NOT NULL,
+  `CustomerContactDetails` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`CustomerID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Staff`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Staff` (
+  `StaffID` INT NOT NULL,
+  `StaffName` VARCHAR(255) NOT NULL,
+  `Role` VARCHAR(255) NOT NULL,
+  `Salary` INT NOT NULL,
+  PRIMARY KEY (`StaffID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Booking`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Booking` (
+  `BookingID` INT NOT NULL,
+  `CustomerID` INT NOT NULL,
+  `BookingDate` DATETIME NOT NULL,
+  `TableNumber` INT NULL,
+  `Customer_CustomerID` INT NOT NULL,
+  `StaffID` INT NOT NULL,
+  PRIMARY KEY (`BookingID`),
+  INDEX `fk_Booking_Customer1_idx` (`Customer_CustomerID` ASC) VISIBLE,
+  INDEX `fk_Booking_Staff1_idx` (`StaffID` ASC) VISIBLE,
+  CONSTRAINT `fk_Booking_Customer1`
+    FOREIGN KEY (`Customer_CustomerID`)
+    REFERENCES `mydb`.`Customer` (`CustomerID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Booking_Staff1`
+    FOREIGN KEY (`StaffID`)
+    REFERENCES `mydb`.`Staff` (`StaffID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`OrderStatus`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`OrderStatus` (
+  `StatusID` INT NOT NULL,
+  `DeliveryDate` DATETIME NOT NULL,
+  `Status` ENUM('In Queue', 'Preparing', 'En Route', 'Delivered') NOT NULL,
+  `OrderID` INT NOT NULL,
+  PRIMARY KEY (`StatusID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Menu`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Menu` (
+  `FoodID` INT NOT NULL,
+  `FoodName` VARCHAR(255) NOT NULL,
+  `FoodType` ENUM('Drink', 'Starter', 'Entree', 'Dessert') NOT NULL,
+  `Cuisine` VARCHAR(255) NOT NULL,
+  `Price` DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (`FoodID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Order`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
+  `OrderID` INT NOT NULL,
+  `BookingID` INT NOT NULL,
+  `OrderDate` DATETIME NOT NULL,
+  `Quantity` INT NOT NULL,
+  `TotalCost` DECIMAL(10,2) NOT NULL,
+  `OrderStatusID` INT NOT NULL,
+  `FoodID` INT NOT NULL,
+  PRIMARY KEY (`OrderID`),
+  INDEX `BookingID_idx` (`BookingID` ASC) VISIBLE,
+  INDEX `fk_Order_OrderStatus1_idx` (`OrderStatusID` ASC) VISIBLE,
+  INDEX `fk_Order_Menu1_idx` (`FoodID` ASC) VISIBLE,
+  CONSTRAINT `BookingID`
+    FOREIGN KEY (`BookingID`)
+    REFERENCES `mydb`.`Booking` (`BookingID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Order_OrderStatus1`
+    FOREIGN KEY (`OrderStatusID`)
+    REFERENCES `mydb`.`OrderStatus` (`StatusID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Order_Menu1`
+    FOREIGN KEY (`FoodID`)
+    REFERENCES `mydb`.`Menu` (`FoodID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
