@@ -80,7 +80,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Menu` (
   `MenuID` INT NOT NULL,
-  `Cuisine` VARCHAR(255) NOT NULL,
+  `Cuisine` ENUM('Italian', 'French', 'Greek', 'Turkish', 'American') NOT NULL,
   PRIMARY KEY (`MenuID`))
 ENGINE = InnoDB;
 
