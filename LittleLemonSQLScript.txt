@@ -18,7 +18,7 @@ USE `LittleLemonDB` ;
 -- Table `LittleLemonDB`.`Customer`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Customer` (
-  `CustomerID` INT NOT NULL,
+  `CustomerID` INT NOT NULL AUTO_INCREMENT,
   `CustomerName` VARCHAR(255) NOT NULL,
   `PhoneNumber` VARCHAR(11) NOT NULL,
   `Email` VARCHAR(255) NULL,
@@ -30,7 +30,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`Staff`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Staff` (
-  `StaffID` INT NOT NULL,
+  `StaffID` INT NOT NULL AUTO_INCREMENT,
   `StaffName` VARCHAR(255) NOT NULL,
   `Role` VARCHAR(255) NOT NULL,
   `Salary` INT NOT NULL,
@@ -42,7 +42,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`Booking`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Booking` (
-  `BookingID` INT NOT NULL,
+  `BookingID` INT NOT NULL AUTO_INCREMENT,
   `BookingDate` DATETIME NOT NULL,
   `TableNumber` INT NULL,
   `CustomerID` INT NOT NULL,
@@ -67,7 +67,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`OrderStatus`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`OrderStatus` (
-  `StatusID` INT NOT NULL,
+  `StatusID` INT NOT NULL AUTO_INCREMENT,
   `DeliveryDate` DATETIME NOT NULL,
   `Status` ENUM('In Queue', 'Preparing', 'En Route', 'Delivered') NOT NULL,
   `OrderID` INT NOT NULL,
@@ -79,7 +79,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`Menu`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Menu` (
-  `MenuID` INT NOT NULL,
+  `MenuID` INT NOT NULL AUTO_INCREMENT,
   `Cuisine` ENUM('Italian', 'French', 'Greek', 'Turkish', 'American') NOT NULL,
   PRIMARY KEY (`MenuID`))
 ENGINE = InnoDB;
@@ -89,7 +89,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`MenuItem`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`MenuItem` (
-  `ItemID` INT NOT NULL,
+  `ItemID` INT NOT NULL AUTO_INCREMENT,
   `ItemType` ENUM('Drink', 'Starter', 'Entree', 'Dessert') NULL,
   `Price` DECIMAL(10,2) NOT NULL,
   `ItemName` VARCHAR(255) NOT NULL,
@@ -108,7 +108,7 @@ ENGINE = InnoDB;
 -- Table `LittleLemonDB`.`ItemOrder`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`ItemOrder` (
-  `OrderID` INT NOT NULL,
+  `OrderID` INT NOT NULL AUTO_INCREMENT,
   `BookingID` INT NOT NULL,
   `OrderDate` DATETIME NOT NULL,
   `Quantity` INT NOT NULL,
